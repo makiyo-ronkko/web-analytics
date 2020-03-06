@@ -1,4 +1,58 @@
-$(function () {
+$(document).ready(function () {
+
+    var pathname = window.location.pathname;
+
+    $(document).on('view:HomePage', function () {
+        console.info('View on HomePage tracked');
+    });
+    $(document).on('view:ProductPage', function () {
+        console.info('View on ProductPage tracked');
+    });
+    $(document).on('view:Basket', function () {
+        console.info('View on Basket tracked');
+    });
+    $(document).on('view:Checkout', function () {
+        console.info('View on Checkout tracked');
+    });
+    $(document).on('view:Delivery', function () {
+        console.info('View on Delivery tracked');
+    });
+    $(document).on('view:Payment', function () {
+        console.info('View on Payment tracked');
+    });
+
+    // $(document).on('conversion', function(info){
+    //     info.forEach(function(product){
+    //         sendGAevent(product.name);
+    //         sendGAevent(product.price);
+    //     });
+    // });
+
+
+    if (pathname === '/index.html') {
+        $(document).trigger('view:HomePage');
+    }
+    if (pathname === '/detail.html') {
+        $(document).trigger('view:ProductPage');
+    }
+    if (pathname === '/basket.html') {
+        $(document).trigger('view:Basket');
+    }
+    if (pathname === '/checkout1.html') {
+        $(document).trigger('view:Checkout');
+    }
+    if (pathname === '/checkout2.html') {
+        $(document).trigger('view:Delivery');
+    }
+    if (pathname === '/checkout3.html') {
+        $(document).trigger('view:Payment');
+    }
+
+
+    $('.box-footer [type="submit"]').click(function () {
+        $(document).trigger('conversion');
+    })
+
 
     $('.shop-detail-carousel').owlCarousel({
         items: 1,
