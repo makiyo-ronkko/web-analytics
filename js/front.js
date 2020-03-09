@@ -66,21 +66,43 @@ $(document).ready(function () {
             return 'Delivery';
         } else if (pathname.indexOf('checkout3.html') > -1) {
             return 'Payment';
+        } else if (pathname.indexOf('checkout4.html') > -1) {
+            return 'Checkout4';
         } else {
             return '';
         }
     }
 
-    function geteProductInfos() {
+    function getProductInfo() {
         return {
             productName: $('#productMain h1.text-center').text(),
             productPrice: $('#productMain .price').text(),
-            productImage: $('img').attr('src')
-        }
+            //productImage: $('img').attr('src')
+        };
     }
 
-    function getCartSummary() {
-        var _products = [];
+
+
+    function getCartInfo() {
+
+        var productInfoEls = $('#checkout tbale tbody tr');
+        var result = {};
+
+        result.totalPurchase = $('#checkout table tbody tr').eq(1).text();
+        result.userAgent = userAgent;
+        result.productList = [];
+
+        $each(productInfoEls, function (index, el) {
+            result.productList.push({
+                productName: $(el).children().eq(1).text(),
+                productPrice: $(el).children().eq(2).text(),
+                quantity: $(el).children().eq(3).text(),
+                discount: $(el).children().eq(4).text(),
+                totalPrice: $(el).children().eq(5).text()
+            });
+        });
+        return result;
+        /* var _products = [];
 
         document.querySelectorAll('tr').forEach(function (product) {
             var _name = product.childNodes()[0];
@@ -89,7 +111,7 @@ $(document).ready(function () {
         return {
             totalPrice: '',
             products: _products
-        };
+        }; */
     }
 
     function getParam() {
@@ -97,10 +119,15 @@ $(document).ready(function () {
         var result = null;
 
         if (pathname === 'ProductPage') {
-            result = geteProductInfo();
+            //result = {};
+            result = getProductInfo();
+            // result.productName = $('#productMain h1.text-center').text();
+            // result.productPrice = $('#productMain .price').text();
             return result;
-        } else if (pageName === 'Checkout') {
-            return getCartSummary();
+        } else if (pageName === 'Checkout4') {
+            // get order information, add found information to the result
+            result = getCartInfo();
+            return result;
         }
         return result;
     }
@@ -108,8 +135,27 @@ $(document).ready(function () {
     function triggerPageEvent() {
         var pageName = getPageName();
         var params = getParam();
-        $(document).trigger('view:' + pageName, params);
+
+        if (pageName === 'Checkout4') {
+            // specific event listener for checkout 4 page
+            $('#checkout button').on('click', function () {
+                $(document).trigger('conversion', params);
+            });
+        } else {
+            $(document).trigger('view:' + pageName, params);
+        }
     }
+
+    $(document).on('view:ProductPage', function (event, params) {
+        console.log('The first parameter that I receive is: ');
+        console.log(event);
+        console.log('The first parameter that I receive is: ');
+        console.log(params);
+
+        /*  GainNode('send', 'ProductPage', 'View', params.productName, {
+             nonInetractions: true
+         }); */
+    });
 
     triggerPageEvent();
 
