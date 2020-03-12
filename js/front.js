@@ -93,19 +93,18 @@ $(document).ready(function () {
 
 
     function getCartInfo() {
-
-        var productInfoEls = $('#checkout tbale tbody tr');
+        var productInfoEls = $('#checkout table tbody tr');
         var result = {};
 
-        result.totalPurchase = $('#checkout table tbody tr').eq(1).text();
-        result.userAgent = userAgent;
+        result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
+        result.userAgent = navigator.userAgent;
         result.productList = [];
 
-        $each(productInfoEls, function (index, el) {
+        $.each(productInfoEls, function (index, el) {
             result.productList.push({
                 productName: $(el).children().eq(1).text(),
-                productPrice: $(el).children().eq(2).text(),
-                quantity: $(el).children().eq(3).text(),
+                quantity: $(el).children().eq(2).text(),
+                productPrice: $(el).children().eq(3).text(),
                 discount: $(el).children().eq(4).text(),
                 totalPrice: $(el).children().eq(5).text()
             });
