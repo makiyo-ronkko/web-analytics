@@ -78,7 +78,7 @@ $(document).ready(function () {
         } else if (pathname.indexOf('checkout4.html') > -1) {
             return 'Checkout4';
         } else {
-            return '';
+            return 'Basket';
         }
     }
 
@@ -167,6 +167,19 @@ $(document).ready(function () {
                 $(document).trigger('conversion', params);
             });
         } else {
+            if (pageName === 'Basket') {
+                window.dataLayer.push({
+                    'ecommerce': {
+                        'checkout': {
+                            'actionField': {
+                                'step': 1
+                            }
+                        }
+                    }
+                });
+            }
+
+
             $(document).trigger('view:' + pageName, params);
         }
     }
