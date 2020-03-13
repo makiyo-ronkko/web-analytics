@@ -90,18 +90,33 @@ $(document).ready(function () {
         };
     }
 
-
+    function generateUniqueId(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
 
     function getCartInfo() {
         var productInfoEls = $('#checkout table tbody tr');
         var result = {};
 
-        result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
-        result.userAgent = navigator.userAgent;
-        result.productList = [];
+        result.actionField = {
+            id: generateUniqueId(16),
+            revenue: $('#checkout table tfoot th').eq(1).text().match(/\d+/g).join('.')
+        };
+
+        result.products = [];
+
+        /* result.totalPurchase = $('#checkout table tfoot th').eq(1).text();
+        result.userAgent = navigator.userAgent; 
+        result.productList = [];*/
 
         $.each(productInfoEls, function (index, el) {
-            result.productList.push({
+            result.products.push({
                 productName: $(el).children().eq(1).text(),
                 quantity: $(el).children().eq(2).text(),
                 productPrice: $(el).children().eq(3).text(),
@@ -126,17 +141,14 @@ $(document).ready(function () {
         var pageName = getPageName();
         var result = null;
 
-        if (pathname === 'ProductPage') {
-            //result = {};
+        if (pageName === 'ProductPage') {
             result = getProductInfo();
-            // result.productName = $('#productMain h1.text-center').text();
-            // result.productPrice = $('#productMain .price').text();
             return result;
         } else if (pageName === 'Checkout4') {
-            // get order information, add found information to the result
             result = getCartInfo();
             return result;
         }
+
         return result;
     }
 
@@ -145,7 +157,12 @@ $(document).ready(function () {
         var params = getParam();
 
         if (pageName === 'Checkout4') {
-            // specific event listener for checkout 4 page
+            window.dataLayer.push({
+                'ecommerce': {
+                    'purchase': getCartInfo()
+                }
+            });
+            // specific event listener for checkout4 Page
             $('#checkout button').on('click', function () {
                 $(document).trigger('conversion', params);
             });
@@ -154,15 +171,17 @@ $(document).ready(function () {
         }
     }
 
+
     $(document).on('view:ProductPage', function (event, params) {
-        console.log('The first parameter that I receive is: ');
+        console.log('The first parameter that I received is: ');
         console.log(event);
-        console.log('The first parameter that I receive is: ');
+
+        console.log('The second parameter that I received is: ')
         console.log(params);
 
-        /*  GainNode('send', 'ProductPage', 'View', params.productName, {
-             nonInetractions: true
-         }); */
+        // ga('send', 'event', 'ProductPage', 'View', params.productName, {
+        //     nonInteraction: true
+        // });
     });
 
     triggerPageEvent();
